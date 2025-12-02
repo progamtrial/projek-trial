@@ -1,0 +1,486 @@
+# 🔒 Protokol Keamanan Sistem Digital Signage BMFR Kelas II Manado
+
+## 📋 Daftar Isi
+1. [Keamanan Akses & Autentikasi](#keamanan-akses)
+2. [Keamanan Database](#keamanan-database)
+3. [Keamanan File Upload](#keamanan-file-upload)
+4. [Keamanan Session & CSRF](#keamanan-session)
+5. [Backup & Recovery](#backup-recovery)
+6. [Monitoring & Logging](#monitoring)
+7. [Checklist Keamanan](#checklist)
+
+---
+
+## 🔐 1. KEAMANAN AKSES & AUTENTIKASI
+
+### A. Password Policy
+**Implementasi:**
+```php
+// Di secure_config.php (sudah ada)
+define('PASSWORD_MIN_LENGTH', 8);
+```
+
+**Aturan:**
+- ✅ Minimum 8 karakter
+- ✅ Kombinasi huruf besar, kecil, angka
+- ✅ Ganti password default setelah instalasi
+- ✅ Password di-hash dengan bcrypt (cost 10)
+
+**Action Items:**
+1. Ganti semua password default:
+   - Username: `admin` → Password: `admin123` (WAJIB DIGANTI!)
+   - Buat password baru minimal 8 karakter
+
+### B. Role-Based Access Control (RBAC)
+
+**Hierarki Role:**
+```
+Superadmin (Full Access)
+    ↓
+Admin (User Management, Content, Settings, Analytics, Backup, RSS)
+    ↓
+Editor (Content Management, Analytics, RSS)
+    ↓
+Viewer (Read-only: View Content, Analytics)
+```
+
+**Implementasi:**
+- File: `enhanced_config.php` atau `secure_config.php`
+- Fungsi: `hasRole()`, `hasPermission()`, `requireRole()`
+
+**Best Practices:**
+- ✅ Berikan role terendah yang dibutuhkan
+- ✅ Review permission setiap 3 bulan
+- ✅ Cabut akses segera jika pegawai pindah/resign
+
+### C. Login Rate Limiting
+
+**Proteksi terhadap Brute Force:**
+```php
+// Sudah ada di secure_config.php
+define('MAX_LOGIN_ATTEMPTS', 5);
+define('LOGIN_LOCKOUT_TIME', 900); // 15 menit
+```
+
+**Cara Kerja:**
+- Maksimal 5 kali salah password
+- Akun terkunci 15 menit
+- Log otomatis tersimpan di `logs/security.log`
+
+**Action: Jika Terkunci**
+```sql
+-- Hapus attempt dari database untuk unlock
+DELETE FROM login_attempts WHERE username = 'namauser';
+```
+
+### D. Session Security
+
+**Konfigurasi (sudah aktif):**
+- `session.cookie_httponly = 1` (Tidak bisa diakses JavaScript)
+- `session.use_strict_mode = 1` (Cegah session fixation)
+- `session.cookie_samesite = 'Lax'` (CSRF protection)
+- Session timeout: 1 jam inaktif
+- User agent validation (cegah session hijacking)
+
+**Action Items:**
+1. Untuk production dengan HTTPS:
+   ```php
+   ini_set('session.cookie_secure', 1); // Aktifkan di secure_config.php
+   ```
+
+---
+
+## 💾 2. KEAMANAN DATABASE
+
+### A. Prepared Statements (SQL Injection Prevention)
+
+**✅ BENAR (Semua query sudah menggunakan ini):**
+```php
+$stmt = $conn->prepare("SELECT * FROM admin WHERE username = ?");
+$stmt->bind_param("s", $username);
+$stmt->execute();
+```
+
+**❌ SALAH (Jangan pernah lakukan ini):**
+```php
+$query = "SELECT * FROM admin WHERE username = '$username'"; // VULNERABLE!
+```
+
+### B. Database User Privileges
+
+**Rekomendasi:**
+1. **Buat user database terpisah untuk aplikasi:**
+   ```sql
+   CREATE USER 'digital_signage_user'@'localhost' IDENTIFIED BY 'strong_password_here';
+   GRANT SELECT, INSERT, UPDATE, DELETE ON digital_signage.* TO 'digital_signage_user'@'localhost';
+   FLUSH PRIVILEGES;
+   ```
+
+2. **Update config.php:**
+   ```php
+   define('DB_USER', 'digital_signage_user');
+   define('DB_PASS', 'strong_password_here');
+   ```
+
+3. **Jangan gunakan root di production!**
+
+### C. Backup Database (Automatis)
+
+**Implementasi:**
+- File: `BackupManager.php`
+- Auto backup setiap 24 jam (jika diaktifkan)
+- Retention: 30 hari
+- Lokasi: `/backups/`
+
+**Manual Backup:**
+1. Login sebagai Admin
+2. Menu: **Management → Backup & Restore**
+3. Klik "Create Backup Now"
+
+**Restore Backup:**
+```bash
+# Via command line
+mysql -u root digital_signage < backups/backup_2025-11-06_123456.sql
+```
+
+---
+
+## 📁 3. KEAMANAN FILE UPLOAD
+
+### A. Validasi File (Multi-Layer)
+
+**Layer 1: Extension Whitelist**
+```php
+define('ALLOWED_IMAGE_EXT', ['jpg', 'jpeg', 'png', 'gif', 'webp']);
+define('ALLOWED_VIDEO_EXT', ['mp4', 'webm', 'ogg']);
+```
+
+**Layer 2: MIME Type Validation (CRITICAL)**
+```php
+$finfo = finfo_open(FILEINFO_MIME_TYPE);
+$mimeType = finfo_file($finfo, $file['tmp_name']);
+
+// Cek apakah MIME type valid
+if (!in_array($mimeType, ALLOWED_IMAGE_MIMES)) {
+    // REJECT dan LOG sebagai suspicious activity
+}
+```
+
+**Layer 3: File Size Limit**
+```php
+define('MAX_FILE_SIZE', 50 * 1024 * 1024); // 50MB
+```
+
+### B. Secure Filename Generation
+
+**✅ BENAR:**
+```php
+$secureFilename = bin2hex(random_bytes(16)) . '.' . $ext;
+// Output: a3f5e2b8c9d1f4e6a7b8c9d0e1f2a3b4.jpg
+```
+
+**❌ SALAH:**
+```php
+$filename = $_FILES['file']['name']; // Bisa mengandung ../../../etc/passwd
+```
+
+### C. Upload Directory Protection
+
+**File `.htaccess` di folder `uploads/`:**
+```apache
+# Sudah ada di dokumen Anda
+Options -Indexes
+
+<FilesMatch "\.php$">
+    Deny from all
+</FilesMatch>
+
+<FilesMatch "\.(jpg|jpeg|png|gif|webp|mp4|webm|ogg)$">
+    Allow from all
+</FilesMatch>
+```
+
+**Ini mencegah:**
+- ❌ Directory listing
+- ❌ Eksekusi PHP shell di folder uploads
+- ✅ Hanya file media yang boleh diakses
+
+---
+
+## 🛡️ 4. KEAMANAN SESSION & CSRF
+
+### A. CSRF Token Protection
+
+**Implementasi (sudah ada di secure_config.php):**
+
+**Generate Token:**
+```php
+function generateCSRFToken() {
+    if (empty($_SESSION['csrf_token'])) {
+        $_SESSION['csrf_token'] = bin2hex(random_bytes(32));
+    }
+    return $_SESSION['csrf_token'];
+}
+```
+
+**Gunakan di Form:**
+```php
+<form method="POST">
+    <?= csrfTokenField() ?>
+    <!-- form fields -->
+</form>
+```
+
+**Validasi di Handler:**
+```php
+requireCSRFToken(); // Panggil di awal POST handler
+```
+
+### B. XSS Prevention
+
+**Output Escaping:**
+```php
+// Gunakan fungsi e() untuk semua output
+echo e($user['nama']); // Safe
+echo htmlspecialchars($data, ENT_QUOTES, 'UTF-8'); // Safe
+
+// JANGAN:
+echo $user['nama']; // VULNERABLE!
+```
+
+### C. Session Timeout & Hijacking Prevention
+
+**Auto-logout setelah 1 jam inaktif:**
+```php
+if (isset($_SESSION['LAST_ACTIVITY']) && (time() - $_SESSION['LAST_ACTIVITY'] > 3600)) {
+    session_destroy();
+    header('Location: login.php');
+}
+$_SESSION['LAST_ACTIVITY'] = time();
+```
+
+**User Agent Validation:**
+```php
+if ($_SESSION['USER_AGENT'] !== $_SERVER['HTTP_USER_AGENT']) {
+    session_destroy(); // Session hijacking detected
+}
+```
+
+---
+
+## 💾 5. BACKUP & RECOVERY
+
+### A. Backup Strategy (3-2-1 Rule)
+
+**Implementasi:**
+1. **3 Copies:** Original + 2 backups
+2. **2 Different Media:** Server HDD + External Drive
+3. **1 Off-site:** Cloud storage (Google Drive/Dropbox)
+
+**Automated Backup:**
+- Frekuensi: Setiap 24 jam (auto)
+- Lokasi: `/backups/`
+- Retention: 30 hari (otomatis hapus backup lama)
+
+### B. Backup Checklist
+
+**Yang di-backup:**
+- ✅ Database (`digital_signage`)
+- ✅ Folder `uploads/` (semua file media)
+- ✅ Folder `backups/` (backup history)
+- ✅ File konfigurasi (`config.php`, `enhanced_config.php`)
+
+**Cara Manual Backup:**
+1. **Database:**
+   ```bash
+   mysqldump -u root digital_signage > backup_manual_2025-11-06.sql
+   ```
+
+2. **Files:**
+   ```bash
+   zip -r backup_files_2025-11-06.zip uploads/ backups/
+   ```
+
+### C. Recovery Procedures
+
+**Scenario 1: Database Corrupt**
+```bash
+# Stop Apache
+# Restore dari backup terbaru
+mysql -u root digital_signage < backups/backup_2025-11-06_123456.sql
+# Start Apache
+```
+
+**Scenario 2: Files Hilang**
+```bash
+# Extract dari backup
+unzip backup_files_2025-11-06.zip -d /path/to/xampp/htdocs/digital-signage/
+```
+
+**Scenario 3: Total System Failure**
+1. Install ulang XAMPP
+2. Buat database baru
+3. Restore database dari backup
+4. Copy semua file aplikasi
+5. Restore folder uploads
+
+---
+
+## 📊 6. MONITORING & LOGGING
+
+### A. Activity Log
+
+**Semua aktivitas terekam:**
+- Login/Logout
+- Create/Update/Delete konten
+- User management changes
+- Settings changes
+- Failed login attempts
+
+**Akses Log:**
+- Menu: **Management → Activity Log**
+- File: `logs/system.log`, `logs/security.log`
+
+### B. Security Monitoring
+
+**File yang di-monitor:**
+```
+logs/
+├── security.log       (Failed logins, suspicious activities)
+├── database_errors.log (Database connection issues)
+├── php_errors.log     (PHP runtime errors)
+└── system.log         (General system activities)
+```
+
+**Review Schedule:**
+- Daily: Check failed login attempts
+- Weekly: Review activity log
+- Monthly: Audit user permissions
+
+### C. Alert System (Rekomendasi)
+
+**Setup Email Alerts untuk:**
+- ❌ 5+ failed login attempts in 1 hour
+- ❌ Suspicious file upload attempts
+- ❌ Database backup failures
+- ❌ Disk space < 10% remaining
+
+---
+
+## ✅ 7. SECURITY CHECKLIST
+
+### Installation Checklist
+- [ ] Ganti semua password default
+- [ ] Set strong password (min 8 char, mixed case, numbers)
+- [ ] Buat user database terpisah (bukan root)
+- [ ] Set permission folder uploads (755)
+- [ ] Verifikasi .htaccess aktif di uploads/
+- [ ] Aktifkan HTTPS jika di production
+- [ ] Set session.cookie_secure = 1 jika HTTPS
+- [ ] Backup file konfigurasi
+
+### Daily Checklist
+- [ ] Review failed login attempts di logs/security.log
+- [ ] Check disk space availability
+- [ ] Verify backup ran successfully (jika auto-backup aktif)
+
+### Weekly Checklist
+- [ ] Review activity log untuk anomali
+- [ ] Check uploaded files di folder uploads/
+- [ ] Test backup restore procedure
+- [ ] Update password jika perlu
+
+### Monthly Checklist
+- [ ] Audit user accounts dan permissions
+- [ ] Review dan hapus inactive users
+- [ ] Clean old backups (>30 days)
+- [ ] Update PHP/MySQL jika ada security patches
+- [ ] Test disaster recovery procedure
+
+### Quarterly Checklist
+- [ ] Full system security audit
+- [ ] Review dan update security protocols
+- [ ] Training refresher untuk admin users
+- [ ] Penetration testing (jika memungkinkan)
+
+---
+
+## 🚨 INCIDENT RESPONSE
+
+### Jika Terjadi Security Breach:
+
+**IMMEDIATE ACTIONS:**
+1. **Isolate System:** Disconnect dari network
+2. **Change All Passwords:** Admin, database, FTP
+3. **Review Logs:** Cari tahu titik masuk attacker
+4. **Backup Current State:** Sebelum cleanup
+5. **Remove Malicious Files:** Scan dengan antivirus
+
+**RECOVERY:**
+1. Restore dari backup terakhir yang clean
+2. Patch vulnerability yang dieksploitasi
+3. Reset semua credentials
+4. Monitor sistem 24/7 selama 1 minggu
+
+**PREVENTION:**
+1. Dokumentasi incident (apa, kapan, bagaimana)
+2. Update security protocols
+3. Training tambahan untuk tim
+4. Implement additional monitoring
+
+---
+
+## 📞 SUPPORT & ESCALATION
+
+**Level 1: User Issues**
+- Reset password
+- Access permission issues
+- → Contact: Admin
+
+**Level 2: System Issues**
+- Database connection errors
+- Backup failures
+- File upload issues
+- → Contact: System Administrator
+
+**Level 3: Security Incidents**
+- Suspected breach
+- Malware detected
+- Data loss
+- → Contact: IT Security Team + Management
+
+---
+
+## 📚 REFERENCES
+
+**File Penting:**
+- `secure_config.php` - Enhanced security config
+- `enhanced_config.php` - Base config dengan RBAC
+- `BackupManager.php` - Automated backup system
+- `fix_permissions.php` - Tool untuk fix role issues
+- `check_system.php` - System diagnostic tool
+
+**Dokumentasi:**
+- PHP Security Best Practices: https://www.php.net/manual/en/security.php
+- OWASP Top 10: https://owasp.org/www-project-top-ten/
+- MySQL Security: https://dev.mysql.com/doc/refman/8.0/en/security.html
+
+---
+
+## ⚠️ CRITICAL REMINDERS
+
+1. **NEVER commit passwords to Git/GitHub**
+2. **ALWAYS use prepared statements for SQL**
+3. **NEVER trust user input - validate everything**
+4. **KEEP backups off-site (cloud storage)**
+5. **UPDATE system regularly (PHP, MySQL, libraries)**
+6. **MONITOR logs daily**
+7. **TEST backup restore monthly**
+8. **CHANGE default passwords immediately after install**
+
+---
+
+**Document Version:** 1.0  
+**Last Updated:** 2025-11-06  
+**Next Review:** 2026-02-06  
+**Owner:** IT Security Team - BMFR Kelas II Manado
