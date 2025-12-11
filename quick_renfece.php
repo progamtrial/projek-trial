@@ -158,7 +158,7 @@
         
         <div style="text-align: center; margin-bottom: 40px;">
             <a href="installation_guide.html" class="btn">📥 Installation Guide</a>
-            <a href="../dashboard.php" class="btn btn-success">📊 Dashboard</a>
+            <a href="../dashboard_modern.php" class="btn btn-success">📊 Dashboard</a>
             <a href="javascript:window.print()" class="btn btn-secondary">🖨️ Print</a>
         </div>
         
@@ -555,7 +555,7 @@ INSERT INTO rss_feeds
             <p>Berita & Running Text Feature v1.0</p>
             <p style="margin-top: 20px;">
                 <a href="installation_guide.html" class="btn">📥 Full Installation Guide</a>
-                <a href="../dashboard.php" class="btn btn-success">📊 Go to Dashboard</a>
+                <a href="../dashboard_modern.php" class="btn btn-success">📊 Go to Dashboard</a>
             </p>
         </div>
     </div>

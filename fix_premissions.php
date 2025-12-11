@@ -346,7 +346,7 @@ $conn->close();
                 </button>
             </form>
             
-            <a href="dashboard.php" class="btn btn-success">
+            <a href="dashboard_modern.php" class="btn btn-success">
                 ✅ Selesai - Kembali ke Dashboard
             </a>
         </div>

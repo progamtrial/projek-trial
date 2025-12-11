@@ -23,7 +23,7 @@ define('LOG_DIR', __DIR__ . '/logs/');
 // File Configuration
 define('ALLOWED_IMAGE_EXT', ['jpg', 'jpeg', 'png', 'gif', 'webp']);
 define('ALLOWED_VIDEO_EXT', ['mp4', 'webm', 'ogg']);
-define('MAX_FILE_SIZE', 50 * 1024 * 1024); // 50MB
+define('MAX_FILE_SIZE', 50 * 1024 * 1024); // 300MB
 
 // Backup Configuration
 define('BACKUP_RETENTION_DAYS', 30);
@@ -338,7 +338,7 @@ function displayAccessDenied($requiredRole = null, $requiredPermission = null) {
                 Hubungi administrator sistem untuk mengubah role atau permission Anda.
             </p>
             
-            <a href="<?= strpos($_SERVER['PHP_SELF'], '/management/') !== false ? '../dashboard.php' : 'dashboard.php' ?>" class="btn">
+            <a href="<?= strpos($_SERVER['PHP_SELF'], '/management/') !== false ? '../dashboard_modern.php' : 'dashboard_modern.php' ?>" class="btn">
                 ← Kembali ke Dashboard
             </a>
             <a href="<?= strpos($_SERVER['PHP_SELF'], '/management/') !== false ? '../auth/logout.php' : 'auth/logout.php' ?>" class="btn btn-secondary">

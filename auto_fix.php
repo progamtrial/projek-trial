@@ -301,7 +301,7 @@ HTACCESS;
     
     $criticalFiles = [
         'config.php' => 'Configuration file',
-        'dashboard.php' => 'Main dashboard',
+        'dashboard_moderphp' => 'Main dashboard',
         'upload_handler.php' => 'Upload handler'
     ];
     
@@ -586,7 +586,7 @@ HTACCESS;
         
         <div class="links">
             <a href="auth/login.php" class="link-btn">🔐 Login</a>
-            <a href="dashboard.php" class="link-btn">📊 Dashboard</a>
+            <a href="dashboard_moderm.php" class="link-btn">📊 Dashboard</a>
             <a href="check_system.php" class="link-btn">🔍 System Check</a>
             <a href="display/display_external.php" target="_blank" class="link-btn">📺 Preview Display</a>
         </div>

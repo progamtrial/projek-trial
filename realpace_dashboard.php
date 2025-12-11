@@ -13,29 +13,29 @@ $errors = [];
 
 if (isset($_POST['replace'])) {
     // 1. Backup dashboard lama
-    if (file_exists('dashboard.php')) {
+    if (file_exists('dashboard_modern.php')) {
         $backupName = 'dashboard_old_backup_' . date('Y-m-d_His') . '.php';
-        if (copy('dashboard.php', $backupName)) {
+        if (copy('dashboard_modern.php', $backupName)) {
             $results[] = "✅ Dashboard lama di-backup ke: $backupName";
         } else {
             $errors[] = "❌ Gagal backup dashboard lama";
         }
     } else {
-        $results[] = "ℹ️ File dashboard.php tidak ditemukan";
+        $results[] = "ℹ️ File dashboard_modern.php tidak ditemukan";
     }
     
-    // 2. Rename dashboard_kinerja.php menjadi dashboard.php
+    // 2. Rename dashboard_kinerja.php menjadi dashboard_modern.php
     if (file_exists('dashboard_kinerja.php')) {
-        // Hapus dashboard.php lama jika ada
-        if (file_exists('dashboard.php')) {
-            unlink('dashboard.php');
+        // Hapus dashboard_modern.php lama jika ada
+        if (file_exists('dashboard_modern.php')) {
+            unlink('dashboard_modern.php');
         }
         
-        // Copy dashboard_kinerja.php ke dashboard.php
-        if (copy('dashboard_kinerja.php', 'dashboard.php')) {
-            $results[] = "✅ Dashboard baru berhasil di-apply ke dashboard.php";
+        // Copy dashboard_kinerja.php ke dashboard_modern.php
+        if (copy('dashboard_kinerja.php', 'dashboard_modern.php')) {
+            $results[] = "✅ Dashboard baru berhasil di-apply ke dashboard_modern.php";
         } else {
-            $errors[] = "❌ Gagal copy dashboard_kinerja.php ke dashboard.php";
+            $errors[] = "❌ Gagal copy dashboard_kinerja.php ke dashboard_modern.php";
         }
     } else {
         $errors[] = "❌ File dashboard_kinerja.php tidak ditemukan";
@@ -261,7 +261,7 @@ if (isset($_POST['replace'])) {
             </ol>
         </div>
         
-        <a href="dashboard.php" class="btn btn-primary" style="display: block; text-align: center; text-decoration: none;">
+        <a href="dashboard_modern.php" class="btn btn-primary" style="display: block; text-align: center; text-decoration: none;">
             📊 Lihat Dashboard Baru
         </a>
         

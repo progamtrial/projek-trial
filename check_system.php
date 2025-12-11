@@ -125,7 +125,7 @@ ini_set('display_errors', 1);
         $requiredFiles = [
             'config.php' => 'Basic configuration',
             'enhanced_config.php' => 'Enhanced configuration (REQUIRED for new features)',
-            'dashboard.php' => 'Basic dashboard',
+            'dashboard_modern.php' => 'Basic dashboard',
             'enhanced_dashboard.php' => 'Enhanced dashboard with new features',
             'BackupManager.php' => 'Backup management class',
             'RSSFeedManager.php' => 'RSS feed management class',
@@ -240,7 +240,7 @@ ini_set('display_errors', 1);
         echo "<h3>📋 Why New Features Don't Appear:</h3>";
         echo "<ol>";
         echo "<li><strong>Missing enhanced_config.php</strong> - File ini WAJIB ada untuk fitur baru</li>";
-        echo "<li><strong>Using wrong dashboard</strong> - Gunakan enhanced_dashboard.php, bukan dashboard.php</li>";
+        echo "<li><strong>Using wrong dashboard</strong> - Gunakan enhanced_dashboard_modern.php, bukan dashboard_modern.php</li>";
         echo "<li><strong>Missing database tables</strong> - Run database_enhancement.sql</li>";
         echo "<li><strong>Missing class files</strong> - BackupManager.php, RSSFeedManager.php, ImageProcessor.php</li>";
         echo "<li><strong>Wrong file paths</strong> - Check if management/ folder exists</li>";
@@ -254,7 +254,7 @@ ini_set('display_errors', 1);
         echo "<h3>🔧 Step-by-Step Fix:</h3>";
         echo "<pre>";
         echo "1. Pastikan file enhanced_config.php ada di root folder\n";
-        echo "2. Rename enhanced_dashboard.php menjadi dashboard.php (backup yang lama)\n";
+        echo "2. Rename enhanced_dashboard_modern.php menjadi dashboard_modern.php (backup yang lama)\n";
         echo "3. Import database_enhancement.sql ke database\n";
         echo "4. Buat folder 'management' jika belum ada\n";
         echo "5. Copy semua file management (analytics.php, manage_users.php, dll)\n";
@@ -267,7 +267,7 @@ ini_set('display_errors', 1);
         // Action Links
         echo "<h2>9. Actions</h2>";
         echo "<a href='auth/login.php' class='btn'>🔐 Go to Login</a>";
-        echo "<a href='dashboard.php' class='btn'>📊 Open Dashboard</a>";
+        echo "<a href='dashboard_modern.php' class='btn'>📊 Open Dashboard</a>";
         echo "<a href='enhanced_dashboard.php' class='btn'>🎯 Open Enhanced Dashboard</a>";
         echo "<a href='setup.php' class='btn'>⚙️ Run Setup</a>";
 

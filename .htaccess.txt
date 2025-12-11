@@ -1,0 +1,41 @@
+# .htaccess - Digital Signage BMFR Kelas II Manado
+# Root project .htaccess
+
+# Increase PHP upload limits untuk FILE BESAR
+php_value upload_max_filesize 200M
+php_value post_max_size 210M
+php_value max_execution_time 600
+php_value max_input_time 600
+php_value memory_limit 512M
+
+# Enable error logging
+php_flag display_errors off
+php_flag log_errors on
+
+# Security: Prevent directory listing
+Options -Indexes
+
+# Protect config files
+<Files "config.php">
+    Require all denied
+</Files>
+
+# Allow PHP files
+<FilesMatch "\.php$">
+    Require all granted
+</FilesMatch>
+
+# Allow image and video files (PENTING!)
+<FilesMatch "\.(jpg|jpeg|png|gif|webp|mp4|webm|ogg|avi|mov)$">
+    Require all granted
+</FilesMatch>
+
+# Allow large file uploads (300MB)
+LimitRequestBody 209715200
+
+# Set proper MIME types for videos
+AddType video/mp4 .mp4 .MP4
+AddType video/webm .webm
+AddType video/ogg .ogg .ogv
+AddType video/quicktime .mov
+AddType image/webp .webp

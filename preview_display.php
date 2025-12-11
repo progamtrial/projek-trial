@@ -160,7 +160,7 @@
 </head>
 <body>
     <div class="preview-container">
-        <a href="dashboard.php" class="back-btn">← Kembali ke Dashboard</a>
+        <a href="dashboard_modern.php" class="back-btn">← Kembali ke Dashboard</a>
         
         <div class="header">
             <div class="header-icon">👁️</div>

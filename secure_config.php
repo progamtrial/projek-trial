@@ -35,7 +35,7 @@ define('LOG_DIR', __DIR__ . '/logs/');
 // File Configuration
 define('ALLOWED_IMAGE_EXT', ['jpg', 'jpeg', 'png', 'gif', 'webp']);
 define('ALLOWED_VIDEO_EXT', ['mp4', 'webm', 'ogg']);
-define('MAX_FILE_SIZE', 200 * 1024 * 1024); // 200MB ← SUDAH DIUBAH
+define('MAX_FILE_SIZE', 200 * 1024 * 1024); // 300MB ← SUDAH DIUBAH
 
 // MIME Type Whitelist (SECURITY ENHANCEMENT)
 define('ALLOWED_IMAGE_MIMES', [

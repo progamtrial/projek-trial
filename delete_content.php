@@ -5,10 +5,9 @@
  * Path: delete_content.php (root folder)
  */
 
-// Force JSON response
-header('Content-Type: application/json');
+// Definisikan skrip ini sebagai API endpoint.
+define('IS_API_REQUEST', true);
 
-// Disable HTML error output
 ini_set('display_errors', 0);
 error_reporting(0);
 
@@ -17,10 +16,6 @@ ob_start();
 
 try {
     require_once 'config.php';
-    
-    // Clear any output before JSON
-    ob_clean();
-    
     requireLogin();
     
     // Cek method
@@ -123,10 +118,7 @@ try {
     $conn->close();
     
     // Clear buffer and send JSON
-    ob_clean();
-    echo json_encode([
-        'success' => true,
-        'message' => 'Konten berhasil dihapus',
+    sendJsonSuccess('Konten berhasil dihapus', [
         'files_deleted' => count($filesDeleted),
         'details' => [
             'id' => $id,
@@ -134,16 +126,10 @@ try {
             'tipe' => !empty($content['video']) ? 'video' : 'gambar',
             'files' => $filesDeleted
         ]
-    ], JSON_UNESCAPED_UNICODE);
+    ]);
     
 } catch (Exception $e) {
-    // Clear buffer and send error JSON
-    ob_clean();
-    http_response_code(400);
-    echo json_encode([
-        'success' => false,
-        'error' => $e->getMessage()
-    ], JSON_UNESCAPED_UNICODE);
+    sendJsonError($e->getMessage(), 400);
 }
 
 // End output buffering

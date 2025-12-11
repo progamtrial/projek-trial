@@ -267,10 +267,10 @@ if (!isset($_SESSION['admin_id'])) {
             }
             
             const file = fileInput.files[0];
-            const maxSize = 50 * 1024 * 1024; // 50MB
+            const maxSize = 50 * 1024 * 1024; // 300MB
             
             if (file.size > maxSize) {
-                showResult('error', '❌ File terlalu besar! Maksimal 50MB');
+                showResult('error', '❌ File terlalu besar! Maksimal 300MB');
                 return;
             }
             

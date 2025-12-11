@@ -233,64 +233,58 @@ $conn->close();
     </main>
 
     <!-- Modal Tambah Target -->
-<div id="addModal" class="modal">
-    <div class="modal-content bg-white rounded-2xl p-8 max-w-2xl w-full mx-4">
-        <div class="flex justify-between items-center mb-6">
-            <h3 class="text-2xl font-bold text-gray-800">➕ Tambah Target Kinerja</h3>
-            <button onclick="closeModal()" class="text-gray-400 hover:text-gray-600 text-3xl">×</button>
+    <div id="addModal" class="modal">
+        <div class="modal-content bg-white rounded-2xl p-8 max-w-2xl w-full mx-4">
+            <div class="flex justify-between items-center mb-6">
+                <h3 class="text-2xl font-bold text-gray-800">➕ Tambah Target Kinerja</h3>
+                <button onclick="closeModal()" class="text-gray-400 hover:text-gray-600 text-3xl">×</button>
+            </div>
+            
+            <form id="addForm" onsubmit="submitTarget(event)" class="space-y-4">
+                <div class="grid grid-cols-2 gap-4">
+                    <div>
+                        <label class="block text-sm font-semibold text-gray-700 mb-2">Kategori / Nama Target *</label>
+                        <input type="text" name="kategori" required class="w-full px-4 py-2 border border-gray-300 rounded-lg">
+                    </div>
+                    <div>
+                        <label class="block text-sm font-semibold text-gray-700 mb-2">Satuan *</label>
+                        <input type="text" name="satuan" required placeholder="stasiun, izin, inspeksi" class="w-full px-4 py-2 border border-gray-300 rounded-lg">
+                    </div>
+                </div>
+                
+                <div class="grid grid-cols-2 gap-4">
+                    <div>
+                        <label class="block text-sm font-semibold text-gray-700 mb-2">Target *</label>
+                        <input type="number" name="target" required min="1" class="w-full px-4 py-2 border border-gray-300 rounded-lg">
+                    </div>
+                    <div>
+                        <label class="block text-sm font-semibold text-gray-700 mb-2">Realisasi Awal</label>
+                        <input type="number" name="realisasi" value="0" min="0" class="w-full px-4 py-2 border border-gray-300 rounded-lg">
+                    </div>
+                </div>
+                
+                <div class="grid grid-cols-2 gap-4">
+                    <div>
+                        <label class="block text-sm font-semibold text-gray-700 mb-2">Bulan</label>
+                        <input type="number" name="bulan" value="<?= $bulanIni ?>" min="1" max="12" class="w-full px-4 py-2 border border-gray-300 rounded-lg">
+                    </div>
+                    <div>
+                        <label class="block text-sm font-semibold text-gray-700 mb-2">Tahun</label>
+                        <input type="number" name="tahun" value="<?= $tahunIni ?>" min="2020" max="2030" class="w-full px-4 py-2 border border-gray-300 rounded-lg">
+                    </div>
+                </div>
+                
+                <div class="flex gap-3 mt-6">
+                    <button type="submit" class="flex-1 bg-gradient-to-r from-blue-500 to-purple-600 text-white px-6 py-3 rounded-lg font-semibold hover:opacity-90">
+                        💾 Simpan Target
+                    </button>
+                    <button type="button" onclick="closeModal()" class="px-6 py-3 bg-gray-200 text-gray-700 rounded-lg font-semibold hover:bg-gray-300">
+                        Batal
+                    </button>
+                </div>
+            </form>
         </div>
-        
-        <form id="addForm" onsubmit="submitTarget(event)" class="space-y-4">
-            <div class="grid grid-cols-2 gap-4">
-                <div>
-                    <label class="block text-sm font-semibold text-gray-700 mb-2">Kategori / Nama Target *</label>
-                    <input type="text" name="kategori" required class="w-full px-4 py-2 border border-gray-300 rounded-lg" placeholder="Contoh: Pengukuran Frekuensi">
-                </div>
-                <div>
-                    <label class="block text-sm font-semibold text-gray-700 mb-2">Satuan *</label>
-                    <input type="text" name="satuan" required class="w-full px-4 py-2 border border-gray-300 rounded-lg" placeholder="contoh: berkas, unit, jam">
-                </div>
-            </div>
-            
-            <div class="grid grid-cols-2 gap-4">
-                <div>
-                    <label class="block text-sm font-semibold text-gray-700 mb-2">Target *</label>
-                    <input type="number" name="target" required min="1" class="w-full px-4 py-2 border border-gray-300 rounded-lg" placeholder="0">
-                </div>
-                <div>
-                    <label class="block text-sm font-semibold text-gray-700 mb-2">Realisasi Awal</label>
-                    <input type="number" name="realisasi" value="0" min="0" class="w-full px-4 py-2 border border-gray-300 rounded-lg">
-                </div>
-            </div>
-            
-            <div class="grid grid-cols-2 gap-4">
-                <div>
-                    <label class="block text-sm font-semibold text-gray-700 mb-2">Bulan</label>
-                    <select name="bulan" class="w-full px-4 py-2 border border-gray-300 rounded-lg">
-                        <?php for($i=1; $i<=12; $i++): ?>
-                        <option value="<?= $i ?>" <?= $i == $bulanIni ? 'selected' : '' ?>>
-                            <?= date('F', mktime(0,0,0,$i,1)) ?>
-                        </option>
-                        <?php endfor; ?>
-                    </select>
-                </div>
-                <div>
-                    <label class="block text-sm font-semibold text-gray-700 mb-2">Tahun</label>
-                    <input type="number" name="tahun" value="<?= $tahunIni ?>" min="2020" max="2030" class="w-full px-4 py-2 border border-gray-300 rounded-lg">
-                </div>
-            </div>
-            
-            <div class="flex gap-3 mt-6">
-                <button type="submit" class="flex-1 bg-gradient-to-r from-blue-500 to-purple-600 text-white px-6 py-3 rounded-lg font-semibold hover:opacity-90">
-                    💾 Simpan Target
-                </button>
-                <button type="button" onclick="closeModal()" class="px-6 py-3 bg-gray-200 text-gray-700 rounded-lg font-semibold hover:bg-gray-300">
-                    Batal
-                </button>
-            </div>
-        </form>
     </div>
-</div>
 
     <script>
         function openAddModal() {

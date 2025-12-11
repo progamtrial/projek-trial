@@ -168,7 +168,7 @@ if (!in_array($mimeType, ALLOWED_IMAGE_MIMES)) {
 
 **Layer 3: File Size Limit**
 ```php
-define('MAX_FILE_SIZE', 50 * 1024 * 1024); // 50MB
+define('MAX_FILE_SIZE', 50 * 1024 * 1024); // 300MB
 ```
 
 ### B. Secure Filename Generation

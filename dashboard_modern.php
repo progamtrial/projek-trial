@@ -3,11 +3,10 @@
  * DASHBOARD MODERN - Digital Signage SMFR Kelas II Manado
  * File: dashboard_modern.php
  * Location: C:\xampp\htdocs\digital-signage\dashboard_modern.php
- * 
- * CARA INSTALL:
+ * * CARA INSTALL:
  * 1. Save file ini sebagai dashboard_modern.php di root folder
  * 2. Backup dashboard.php lama
- * 3. Rename dashboard_modern.php menjadi dashboard.php (atau akses langsung)
+ * 3. Rename dashboard_modern.php menjadi dashboard_modern.php (atau akses langsung)
  * 4. Akses: http://localhost/digital-signage/dashboard_modern.php
  */
 
@@ -130,10 +129,8 @@ if (!defined('ROLES')) {
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Dashboard Modern - SMFR Manado</title>
     
-    <!-- Tailwind CSS -->
     <script src="https://cdn.tailwindcss.com"></script>
     
-    <!-- Lucide Icons -->
     <script src="https://unpkg.com/lucide@latest"></script>
     
     <style>
@@ -169,12 +166,10 @@ if (!defined('ROLES')) {
 </head>
 <body class="min-h-screen bg-gradient-to-br from-purple-900 via-purple-800 to-indigo-900">
     
-    <!-- Background Wave Animation -->
     <div class="fixed inset-0 opacity-10 pointer-events-none">
         <div class="absolute inset-0 wave-bg"></div>
     </div>
 
-    <!-- Header -->
     <header class="bg-white/10 backdrop-blur-lg border-b border-white/20 sticky top-0 z-50 shadow-lg">
         <div class="max-w-7xl mx-auto px-6 py-4">
             <div class="flex items-center justify-between">
@@ -210,21 +205,17 @@ if (!defined('ROLES')) {
         </div>
     </header>
 
-    <!-- Main Content -->
     <main class="max-w-7xl mx-auto px-6 py-8 relative z-10">
         
-        <!-- Welcome Banner -->
         <div class="bg-gradient-to-r from-purple-600 to-indigo-600 rounded-2xl p-8 mb-8 shadow-2xl relative overflow-hidden">
             <div class="absolute top-0 right-0 w-64 h-64 bg-white/10 rounded-full -mr-32 -mt-32 float-element"></div>
             <div class="relative z-10">
-                <h2 class="text-3xl font-bold text-white mb-2">Selamat Datang, <?= htmlspecialchars($currentUser['nama']) ?>! 👋</h2>
+                <h2 class="text-3xl font-bold text-white mb-2">Selamat Datang, <?= htmlspecialchars($currentUser['nama']) ?>‹</h2>
                 <p class="text-purple-100">Monitoring sistem digital signage berjalan dengan baik</p>
             </div>
         </div>
 
-        <!-- Statistics Cards -->
         <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-5 gap-6 mb-8">
-            <!-- Card 1: External Display -->
             <div class="bg-gradient-to-br from-white to-purple-50 rounded-2xl p-6 shadow-lg hover:shadow-xl transition-all duration-300 border border-purple-100 relative overflow-hidden group">
                 <div class="absolute top-0 right-0 w-32 h-32 bg-gradient-to-br from-purple-400/10 to-transparent rounded-full -mr-16 -mt-16 group-hover:scale-150 transition-transform duration-500"></div>
                 <div class="relative z-10">
@@ -242,7 +233,6 @@ if (!defined('ROLES')) {
                 </div>
             </div>
 
-            <!-- Card 2: Internal Display -->
             <div class="bg-gradient-to-br from-white to-purple-50 rounded-2xl p-6 shadow-lg hover:shadow-xl transition-all duration-300 border border-purple-100 relative overflow-hidden group">
                 <div class="absolute top-0 right-0 w-32 h-32 bg-gradient-to-br from-purple-400/10 to-transparent rounded-full -mr-16 -mt-16 group-hover:scale-150 transition-transform duration-500"></div>
                 <div class="relative z-10">
@@ -260,7 +250,6 @@ if (!defined('ROLES')) {
                 </div>
             </div>
 
-            <!-- Card 3: Today Displays -->
             <div class="bg-gradient-to-br from-white to-purple-50 rounded-2xl p-6 shadow-lg hover:shadow-xl transition-all duration-300 border border-purple-100 relative overflow-hidden group">
                 <div class="absolute top-0 right-0 w-32 h-32 bg-gradient-to-br from-purple-400/10 to-transparent rounded-full -mr-16 -mt-16 group-hover:scale-150 transition-transform duration-500"></div>
                 <div class="relative z-10">
@@ -278,7 +267,6 @@ if (!defined('ROLES')) {
                 </div>
             </div>
 
-            <!-- Card 4: Active Users -->
             <div class="bg-gradient-to-br from-white to-purple-50 rounded-2xl p-6 shadow-lg hover:shadow-xl transition-all duration-300 border border-purple-100 relative overflow-hidden group">
                 <div class="absolute top-0 right-0 w-32 h-32 bg-gradient-to-br from-purple-400/10 to-transparent rounded-full -mr-16 -mt-16 group-hover:scale-150 transition-transform duration-500"></div>
                 <div class="relative z-10">
@@ -292,7 +280,6 @@ if (!defined('ROLES')) {
                 </div>
             </div>
 
-            <!-- Card 5: Total Content -->
             <div class="bg-gradient-to-br from-white to-purple-50 rounded-2xl p-6 shadow-lg hover:shadow-xl transition-all duration-300 border border-purple-100 relative overflow-hidden group">
                 <div class="absolute top-0 right-0 w-32 h-32 bg-gradient-to-br from-purple-400/10 to-transparent rounded-full -mr-16 -mt-16 group-hover:scale-150 transition-transform duration-500"></div>
                 <div class="relative z-10">
@@ -311,23 +298,20 @@ if (!defined('ROLES')) {
             </div>
         </div>
 
-        <!-- Tabs -->
         <div class="bg-white/10 backdrop-blur-lg rounded-2xl p-2 mb-8 inline-flex space-x-2 shadow-lg">
             <button onclick="showTab('overview')" id="tab-overview" class="px-6 py-3 rounded-xl font-semibold transition-all duration-300 bg-white text-purple-600 shadow-lg">
-                📊 Overview
+                 Overview
             </button>
             <button onclick="showTab('kinerja')" id="tab-kinerja" class="px-6 py-3 rounded-xl font-semibold transition-all duration-300 text-white hover:bg-white/10">
-                🎯 Target Kinerja
+                 Target Kinerja
             </button>
             <button onclick="showTab('berita')" id="tab-berita" class="px-6 py-3 rounded-xl font-semibold transition-all duration-300 text-white hover:bg-white/10">
-                📰 Berita
+                 Berita
             </button>
         </div>
 
-        <!-- Tab Content: Overview -->
         <div id="content-overview" class="tab-content">
             <div class="grid grid-cols-1 lg:grid-cols-2 gap-8">
-                <!-- Quick Actions -->
                 <div class="bg-white rounded-2xl p-6 shadow-xl">
                     <h3 class="text-xl font-bold text-gray-800 mb-6 flex items-center">
                         <i data-lucide="target" class="w-6 h-6 mr-2 text-purple-600"></i>
@@ -342,9 +326,9 @@ if (!defined('ROLES')) {
                             <i data-lucide="monitor" class="w-8 h-8"></i>
                             <span class="font-semibold text-sm">Kelola Internal</span>
                         </a>
-                        <a href="management/analytics.php" class="bg-gradient-to-r from-green-500 to-green-600 text-white p-6 rounded-xl hover:shadow-lg transition-all duration-300 flex flex-col items-center space-y-2">
-                            <i data-lucide="bar-chart-3" class="w-8 h-8"></i>
-                            <span class="font-semibold text-sm">Analytics</span>
+                        <a href="management/manage_kinerja.php" class="bg-gradient-to-r from-red-500 to-pink-600 text-white p-6 rounded-xl hover:shadow-lg transition-all duration-300 flex flex-col items-center space-y-2">
+                            <i data-lucide="list-checks" class="w-8 h-8"></i>
+                            <span class="font-semibold text-sm">Kelola Kinerja</span>
                         </a>
                         <a href="management/manage_users.php" class="bg-gradient-to-r from-orange-500 to-orange-600 text-white p-6 rounded-xl hover:shadow-lg transition-all duration-300 flex flex-col items-center space-y-2">
                             <i data-lucide="users" class="w-8 h-8"></i>
@@ -353,7 +337,6 @@ if (!defined('ROLES')) {
                     </div>
                 </div>
 
-                <!-- System Status -->
                 <div class="bg-white rounded-2xl p-6 shadow-xl">
                     <h3 class="text-xl font-bold text-gray-800 mb-6 flex items-center">
                         <i data-lucide="activity" class="w-6 h-6 mr-2 text-purple-600"></i>
@@ -389,22 +372,19 @@ if (!defined('ROLES')) {
             </div>
         </div>
 
-        <!-- Tab Content: Kinerja -->
         <div id="content-kinerja" class="tab-content hidden">
             <?php if (!empty($kinerjaData)): ?>
-            <!-- Rata-rata Pencapaian -->
             <div class="bg-gradient-to-r from-purple-500 to-indigo-500 rounded-2xl p-8 mb-8 text-center shadow-2xl">
                 <div class="text-7xl font-bold text-white mb-2"><?= $rataRataPencapaian ?>%</div>
                 <div class="text-xl text-purple-100">Pencapaian Rata-Rata - <?= getNamaBulan($bulanIni) ?> <?= $tahunIni ?></div>
             </div>
 
-            <!-- Kinerja Cards -->
             <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
                 <?php foreach ($kinerjaData as $item): ?>
                 <?php
                     $statusColor = $item['status'] === 'tercapai' ? 'green' : ($item['status'] === 'mendekati' ? 'yellow' : 'red');
                     $statusBg = $item['status'] === 'tercapai' ? 'bg-green-100 text-green-700' : ($item['status'] === 'mendekati' ? 'bg-yellow-100 text-yellow-700' : 'bg-red-100 text-red-700');
-                    $statusIcon = $item['status'] === 'tercapai' ? '✅' : ($item['status'] === 'mendekati' ? '⚠️' : '📈');
+                    $statusIcon = $item['status'] === 'tercapai' ? 'âœ…' : ($item['status'] === 'mendekati' ? 'âš ï¸ ' : 'ðŸ“ˆ');
                     $statusText = $item['status'] === 'tercapai' ? 'Tercapai' : ($item['status'] === 'mendekati' ? 'Mendekati' : 'Belum');
                     $circleColor = $item['status'] === 'tercapai' ? '#10b981' : ($item['status'] === 'mendekati' ? '#f59e0b' : '#ef4444');
                     $circumference = 2 * 3.14159 * 70;
@@ -454,9 +434,54 @@ if (!defined('ROLES')) {
             <?php endif; ?>
         </div>
 
-        <!-- Tab Content: Berita -->
         <div id="content-berita" class="tab-content hidden">
             <div class="bg-white rounded-2xl p-6 shadow-xl">
                 <h3 class="text-xl font-bold text-gray-800 mb-6 flex items-center">
                     <i data-lucide="newspaper" class="w-6 h-6 mr-2 text-purple-600"></i>
                     Berita Terbaru
+
+
+                    <script>
+    // Fungsi untuk memperbarui jam setiap detik
+    function updateClock() {
+        const now = new Date();
+        const clockElement = document.getElementById('clock');
+        if (clockElement) {
+            clockElement.textContent = now.toLocaleTimeString('id-ID', { hour: '2-digit', minute: '2-digit', second: '2-digit' });
+        }
+    }
+    setInterval(updateClock, 1000);
+    updateClock(); // Panggil sekali untuk inisialisasi
+
+    // FUNGSI INI ADALAH SOLUSI UNTUK MASALAH TAB
+    function showTab(tabName) {
+        // 1. Kelola Konten: Sembunyikan semua konten dan tampilkan yang dipilih
+        const contents = document.querySelectorAll('.tab-content');
+        contents.forEach(content => {
+            content.classList.add('hidden');
+        });
+        const selectedContent = document.getElementById(`content-${tabName}`);
+        if (selectedContent) {
+            selectedContent.classList.remove('hidden');
+        }
+
+        // 2. Kelola Tombol: Hapus style aktif dari semua tombol dan tambahkan ke tombol yang dipilih
+        const tabs = document.querySelectorAll('[id^="tab-"]');
+        tabs.forEach(tab => {
+            tab.classList.remove('bg-white', 'text-purple-600', 'shadow-lg');
+            tab.classList.add('text-white', 'hover:bg-white/10');
+        });
+        const selectedTab = document.getElementById(`tab-${tabName}`);
+        if (selectedTab) {
+            selectedTab.classList.remove('text-white', 'hover:bg-white/10');
+            selectedTab.classList.add('bg-white', 'text-purple-600', 'shadow-lg');
+        }
+    }
+
+    // Panggil saat dokumen dimuat untuk memastikan tab 'overview' aktif
+    document.addEventListener('DOMContentLoaded', () => {
+        showTab('overview');
+        lucide.createIcons();
+    });
+</script>
+}

@@ -1,5 +1,11 @@
 <?php
 // Error reporting untuk development
+// Set zona waktu (Penting untuk fungsi time())
+date_default_timezone_set('Asia/Makassar');
+
+// Base URL aplikasi untuk path yang andal
+define('BASE_URL', '/digital-balmon2');
+
 error_reporting(E_ALL);
 ini_set('display_errors', 1);
 
@@ -31,8 +37,11 @@ function getConnection() {
         return $conn;
         
     } catch (Exception $e) {
-        // Display user-friendly error page
-        displayDatabaseError($e->getMessage());
+        // If the calling script defined itself as an API, send JSON error.
+        if (defined('IS_API_REQUEST') && IS_API_REQUEST === true) {
+            sendJsonError("Database Connection Error: " . $e->getMessage(), 503); // 503 Service Unavailable
+        }
+        displayDatabaseError($e->getMessage()); // Tampilkan halaman HTML untuk request biasa
         exit;
     }
 }
@@ -211,6 +220,39 @@ function displayDatabaseError($errorMessage) {
     <?php
 }
 
+/**
+ * Fungsi untuk mengirim error JSON, bisa dipanggil dari mana saja.
+ */
+if (!function_exists('sendJsonError')) {
+    function sendJsonError($message, $code = 500) {
+        if (ob_get_level()) ob_clean();
+        http_response_code($code);
+        header('Content-Type: application/json; charset=utf-8');
+        echo json_encode(
+            ['success' => false, 'error' => $message],
+            JSON_UNESCAPED_UNICODE | JSON_INVALID_UTF8_SUBSTITUTE
+        );
+        exit;
+    }
+}
+
+/**
+ * Fungsi untuk mengirim respons sukses JSON.
+ */
+if (!function_exists('sendJsonSuccess')) {
+    function sendJsonSuccess($message, $data = null) {
+        if (ob_get_level()) ob_clean();
+        http_response_code(200);
+        header('Content-Type: application/json; charset=utf-8');
+        $response = ['success' => true, 'message' => $message];
+        if ($data !== null) {
+            $response['data'] = $data;
+        }
+        echo json_encode($response, JSON_UNESCAPED_UNICODE | JSON_INVALID_UTF8_SUBSTITUTE);
+        exit;
+    }
+}
+
 // Folder upload
 define('UPLOAD_DIR', __DIR__ . '/uploads/');
 define('UPLOAD_URL', 'uploads/');
@@ -219,7 +261,7 @@ define('BACKUP_DIR', __DIR__ . '/backups/');
 // Allowed file types
 define('ALLOWED_IMAGE_EXT', ['jpg', 'jpeg', 'png', 'gif']);
 define('ALLOWED_VIDEO_EXT', ['mp4', 'webm', 'ogg']);
-define('MAX_FILE_SIZE', 200 * 1024 * 1024); // 200mb
+define('MAX_FILE_SIZE', 300 * 1024 * 1024); // 300MB
 
 // Buat folder upload jika belum ada
 if (!file_exists(UPLOAD_DIR)) {
@@ -239,17 +281,15 @@ function isLoggedIn() {
 // Fungsi redirect jika belum login
 function requireLogin() {
     if (!isLoggedIn()) {
-        $loginPath = 'auth/login.php';
-        $currentPath = $_SERVER['PHP_SELF'];
-        
-        // Detect if we're in a subdirectory
-        if (strpos($currentPath, '/management/') !== false || 
-            strpos($currentPath, '/manage_display/') !== false) {
-            $loginPath = '../auth/login.php';
+        // If the calling script defined itself as an API, send JSON error.
+        if (defined('IS_API_REQUEST') && IS_API_REQUEST === true) {
+            // Untuk API, kirim error 401 Unauthorized dalam format JSON
+            sendJsonError("Sesi Anda telah berakhir. Silakan login kembali.", 401);
+        } else {
+            // Untuk halaman biasa, redirect ke halaman login
+            header('Location: ' . BASE_URL . '/auth/login.php?error=session_expired');
+            exit;
         }
-        
-        header('Location: ' . $loginPath);
-        exit;
     }
 }
 
@@ -259,7 +299,7 @@ function requireLogin() {
 function testDatabaseConnection() {
     try {
         $conn = new mysqli(DB_HOST, DB_USER, DB_PASS, DB_NAME, DB_PORT);
-        
+
         if ($conn->connect_error) {
             return [
                 'success' => false,
@@ -267,12 +307,10 @@ function testDatabaseConnection() {
                 'error_code' => $conn->connect_errno
             ];
         }
-        
+
         // Test query
         $result = $conn->query("SELECT 1");
-        
         $conn->close();
-        
         return [
             'success' => true,
             'message' => 'Connection successful'
@@ -285,4 +323,3 @@ function testDatabaseConnection() {
         ];
     }
 }
-?>

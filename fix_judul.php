@@ -126,7 +126,7 @@ if (isset($_POST['run_fix'])) {
             </button>
         </form>
         
-        <a href="dashboard.php" style="display: block; text-align: center; margin-top: 20px; color: #667eea; text-decoration: none;">
+        <a href="dashboard_modern.php" style="display: block; text-align: center; margin-top: 20px; color: #667eea; text-decoration: none;">
             ← Kembali ke Dashboard
         </a>
     </div>
